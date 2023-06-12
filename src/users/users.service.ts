@@ -4,11 +4,14 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
+import { Profile } from './entities/profile.entity';
+import { CreateProfileDto } from './dto/create-profile.dto';
 
 @Injectable()
 export class UsersService {
 
-  constructor(@InjectRepository(Users) private userRepository: Repository<Users>) { }
+  constructor(@InjectRepository(Users) private userRepository: Repository<Users>,
+              @InjectRepository(Profile) private profileRepository: Repository<Profile>) { }
 
   async create(user: CreateUserDto) {
 
@@ -58,5 +61,20 @@ export class UsersService {
     }
 
     return deleteUser;
+  }
+
+  async createProfile(id: string, createProfileDto: CreateProfileDto) {
+    const userFound = await this.userRepository.findOne({where: {id}})
+
+    if(!userFound) {
+      return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
+    }
+
+    const profile = this.profileRepository.create(createProfileDto);
+    const saveProfile = await this.profileRepository.save(profile)
+
+    userFound.profile = saveProfile;
+
+    return this.userRepository.save(userFound);
   }
 }

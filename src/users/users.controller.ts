@@ -3,6 +3,7 @@ import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { Users } from './entities/user.entity';
+import { CreateProfileDto } from './dto/create-profile.dto';
 
 const { v4: uuidv4 } = require('uuid');
 
@@ -39,5 +40,16 @@ export class UsersController {
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(id);
+  }
+
+  @Post(':id/profile')
+  createProfile(@Param('id') id: string, @Body() profile: CreateProfileDto) {
+
+    const idProfile = {
+      id: uuidv4()
+    }
+    Object.assign(profile, idProfile);
+
+    return this.usersService.createProfile(id, profile);
   }
 }
