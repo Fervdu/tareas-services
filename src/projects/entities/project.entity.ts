@@ -1,7 +1,7 @@
 import { Users } from "src/users/entities/user.entity";
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm";
 
- @Entity('')
+@Entity('')
 export class Projects {
     @PrimaryColumn()
     id: string
@@ -17,6 +17,9 @@ export class Projects {
 
     @Column({ type: 'datetime', default: () => null })
     updatedAt: Date
+
+    @Column()
+    userId: string
 
     @ManyToOne(() => Users, user => user.projects)
     user: Users
