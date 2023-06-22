@@ -19,7 +19,8 @@ export class ProjectsService {
     if(!userFound) {
       return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
     }
-
+    console.log('holis');
+    
     const newProject = this.projectRepository.create(project);
     return this.projectRepository.save(newProject);
 

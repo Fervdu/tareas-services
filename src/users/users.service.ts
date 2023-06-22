@@ -11,7 +11,7 @@ import { CreateProfileDto } from './dto/create-profile.dto';
 export class UsersService {
 
   constructor(@InjectRepository(Users) private userRepository: Repository<Users>,
-              @InjectRepository(Profile) private profileRepository: Repository<Profile>) { }
+    @InjectRepository(Profile) private profileRepository: Repository<Profile>) { }
 
   async create(user: CreateUserDto) {
 
@@ -34,9 +34,9 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id } });
+    const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['projects'] });
 
-    if(!foundUser) {
+    if (!foundUser) {
       return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
     }
 
@@ -46,7 +46,7 @@ export class UsersService {
   async update(id: string, user: UpdateUserDto) {
     const userUpdate = await this.userRepository.update({ id }, user);
 
-    if(userUpdate.affected === 0) {
+    if (userUpdate.affected === 0) {
       return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
     }
 
@@ -56,7 +56,7 @@ export class UsersService {
   async remove(id: string) {
     const deleteUser = await this.userRepository.delete({ id });
 
-    if(deleteUser.affected === 0) {
+    if (deleteUser.affected === 0) {
       return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
     }
 
@@ -64,9 +64,9 @@ export class UsersService {
   }
 
   async createProfile(id: string, createProfileDto: CreateProfileDto) {
-    const userFound = await this.userRepository.findOne({where: {id}})
+    const userFound = await this.userRepository.findOne({ where: { id } })
 
-    if(!userFound) {
+    if (!userFound) {
       return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
     }
 

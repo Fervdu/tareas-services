@@ -3,13 +3,19 @@ import { ProjectsService } from './projects.service';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 
+const { v4: uuidv4 } = require('uuid');
+
 @Controller('projects')
 export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  create(@Body() newProject: CreateProjectDto) {
+    const id = {
+      id: uuidv4()
+    }
+    Object.assign(newProject, id);
+    return this.projectsService.create(newProject);
   }
 
   @Get()
