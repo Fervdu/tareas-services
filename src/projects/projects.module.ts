@@ -4,11 +4,13 @@ import { ProjectsController } from './projects.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Projects } from './entities/project.entity';
 import { UsersModule } from 'src/users/users.module';
+import { GuardModule } from 'src/guard/guard.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Projects]),
-    UsersModule
+    UsersModule,
+    GuardModule
   ],
   controllers: [ProjectsController],
   providers: [ProjectsService],
