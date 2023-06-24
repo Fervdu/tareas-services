@@ -5,6 +5,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Projects } from './entities/project.entity';
 import { Repository } from 'typeorm';
 import { UsersService } from 'src/users/users.service';
+import { exit } from 'process';
 
 @Injectable()
 export class ProjectsService {
@@ -14,15 +15,19 @@ export class ProjectsService {
     @InjectRepository(Projects) private projectRepository: Repository<Projects>) {}
 
   async create(project: CreateProjectDto) {
-    const userFound = await this.usersServices.findOne(project.userId);
 
-    if(!userFound) {
-      return new HttpException('Usuario no encontrado', HttpStatus.NOT_FOUND);
-    }
-    console.log('holis');
-    
-    const newProject = this.projectRepository.create(project);
-    return this.projectRepository.save(newProject);
+      const userFound = await this.usersServices.findOne(project.userId);
+
+      if (userFound instanceof HttpException) {
+
+        throw new HttpException(userFound.message, userFound.getStatus());
+
+      } else {
+        
+        const newProject = this.projectRepository.create(project);
+        return this.projectRepository.save(newProject);
+
+      }
 
   }
 
@@ -30,8 +35,14 @@ export class ProjectsService {
     return this.projectRepository.find();
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} project`;
+  async findOne(id: string) {
+    const foundProject = await this.projectRepository.findOne({ where: {id}, relations: ['tasks']});
+
+    if(!foundProject) {
+      return new HttpException('Proyecto no existe', HttpStatus.NOT_FOUND);
+    }
+
+    return foundProject;
   }
 
   update(id: number, updateProjectDto: UpdateProjectDto) {

@@ -3,13 +3,19 @@ import { TasksService } from './tasks.service';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
 
+const { v4: uuidv4 } = require('uuid');
+
 @Controller('tasks')
 export class TasksController {
   constructor(private readonly tasksService: TasksService) {}
 
   @Post()
-  create(@Body() createTaskDto: CreateTaskDto) {
-    return this.tasksService.create(createTaskDto);
+  create(@Body() newTask: CreateTaskDto) {
+    const id = {
+      id: uuidv4()
+    }
+    Object.assign(newTask, id);
+    return this.tasksService.create(newTask);
   }
 
   @Get()

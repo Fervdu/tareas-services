@@ -15,6 +15,7 @@ export class ProjectsController {
       id: uuidv4()
     }
     Object.assign(newProject, id);
+
     return this.projectsService.create(newProject);
   }
 
@@ -25,7 +26,7 @@ export class ProjectsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.projectsService.findOne(+id);
+    return this.projectsService.findOne(id);
   }
 
   @Patch(':id')

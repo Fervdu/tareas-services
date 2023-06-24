@@ -11,6 +11,7 @@ import { UsersModule } from 'src/users/users.module';
     UsersModule
   ],
   controllers: [ProjectsController],
-  providers: [ProjectsService]
+  providers: [ProjectsService],
+  exports: [ProjectsService]
 })
 export class ProjectsModule {}

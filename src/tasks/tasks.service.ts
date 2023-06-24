@@ -1,11 +1,34 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { CreateTaskDto } from './dto/create-task.dto';
 import { UpdateTaskDto } from './dto/update-task.dto';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Tasks } from './entities/task.entity';
+import { Repository } from 'typeorm';
+import { ProjectsService } from 'src/projects/projects.service';
+import { exit } from 'process';
 
 @Injectable()
 export class TasksService {
-  create(createTaskDto: CreateTaskDto) {
-    return 'This action adds a new task';
+
+  constructor(
+    private projectService: ProjectsService,
+    @InjectRepository(Tasks) private taskRepository: Repository<Tasks>
+  ) {}
+
+  async create(task: CreateTaskDto) {
+    const projectFound = await this.projectService.findOne(task.projectId);
+
+    if(projectFound instanceof HttpException) {
+
+      throw new HttpException(projectFound.message, projectFound.getStatus())
+      
+    } else {
+
+      const newTask = this.taskRepository.create(task);
+      return this.taskRepository.save(newTask);
+
+    }
+    
   }
 
   findAll() {
