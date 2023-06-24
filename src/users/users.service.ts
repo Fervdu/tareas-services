@@ -37,7 +37,7 @@ export class UsersService {
     const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['projects'] });
 
     if (!foundUser) {
-      return new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
+      throw new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
     }
 
     return foundUser;
