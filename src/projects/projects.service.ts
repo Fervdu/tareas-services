@@ -31,8 +31,16 @@ export class ProjectsService {
 
   }
 
-  findAll() {
-    return this.projectRepository.find();
+  async findAllByUserId(userId: string) {
+
+    const foundProject = await this.projectRepository.findOne({ where: {userId}});
+
+    if(!foundProject) {
+      return new HttpException('Proyecto no existe', HttpStatus.NOT_FOUND);
+    }
+
+    return foundProject;
+
   }
 
   async findOne(id: string) {
