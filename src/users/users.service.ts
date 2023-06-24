@@ -6,6 +6,7 @@ import { Users } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Profile } from './entities/profile.entity';
 import { CreateProfileDto } from './dto/create-profile.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -25,7 +26,10 @@ export class UsersService {
       return new HttpException('Usuario ya existe', HttpStatus.CONFLICT);
     }
 
+    const hashedPassword = await bcrypt.hash(user.password, 10);
+    user.password = hashedPassword;
     const newUser = this.userRepository.create(user);
+
     return this.userRepository.save(newUser);
   }
 
@@ -34,7 +38,7 @@ export class UsersService {
   }
 
   async findOne(id: string) {
-    const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['projects'] });
+    const foundUser = await this.userRepository.findOne({ where: { id }, relations: ['projects', 'profile'] });
 
     if (!foundUser) {
       throw new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
