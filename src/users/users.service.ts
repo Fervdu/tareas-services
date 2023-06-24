@@ -47,6 +47,16 @@ export class UsersService {
     return foundUser;
   }
 
+  async findByUser(username: string) {
+    const foundUser = await this.userRepository.findOne({ where: { username }});
+
+    if (!foundUser) {
+      throw new HttpException('Usuario no existe', HttpStatus.NOT_FOUND);
+    }
+
+    return foundUser;
+  }
+
   async update(id: string, user: UpdateUserDto) {
     const userUpdate = await this.userRepository.update({ id }, user);
 
